@@ -18,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Incorrect password.";
         } else {
             $_SESSION['user'] = $user['username'];
+            $_SESSION['role'] = $user['role']; // ✅ Store role in session
             header("Location: index.php");
             exit();
         }
