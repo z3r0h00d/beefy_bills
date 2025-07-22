@@ -4,7 +4,8 @@ if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit();
 }
-$db = new SQLite3('../data/users.db');
+$db_path = getenv('DB_PATH') ?: '/var/sqlite/users.db';
+$db = new SQLite3($db_path);
 $users = $db->query("SELECT id, username, role FROM users");
 ?>
 <!DOCTYPE html>

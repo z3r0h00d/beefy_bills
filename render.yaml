@@ -6,9 +6,6 @@ services:
     plan: free
     branch: main
     dockerfilePath: ./Dockerfile
-    buildFilter:
-      paths:
-        - beefybills/**
     envVars:
       - key: DB_PATH
         value: /var/sqlite/users.db

@@ -2,9 +2,10 @@
 session_start();
 $error = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $db = new SQLite3('../data/users.db');
+    $db_path = getenv('DB_PATH') ?: '/var/sqlite/users.db';
+    $db = new SQLite3($db_path);
     $username = $_POST['username'];
-    $password = str_rot13($_POST['password']); // ROT13 decode
+    $password = str_rot13($_POST['password']);
 
     $stmt = $db->prepare("SELECT * FROM users WHERE username = :username AND password = :password AND role = 'admin'");
     $stmt->bindValue(':username', $username, SQLITE3_TEXT);
