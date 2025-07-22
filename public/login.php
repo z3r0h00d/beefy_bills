@@ -2,20 +2,27 @@
 session_start();
 include(__DIR__ . '/includes/config.php');
 $error = '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = str_rot13($_POST['password']);
-    $stmt = $db->prepare("SELECT * FROM users WHERE username = :username AND password = :password");
+
+    $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
     $stmt->bindValue(':username', $username);
-    $stmt->bindValue(':password', $password);
-    $result = $stmt->execute();
-    $user = $result->fetch(PDO::FETCH_ASSOC);
-    if ($user) {
-        $_SESSION['user'] = $user['username'];
-        header("Location: index.php");
-        exit();
+
+    if ($stmt->execute()) {
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$user) {
+            $error = "❌ User not registered.";
+        } elseif ($user['password'] !== $password) {
+            $error = "🔐 Incorrect password.";
+        } else {
+            $_SESSION['user'] = $user['username'];
+            header("Location: index.php");
+            exit();
+        }
     } else {
-        $error = "Invalid credentials.";
+        $error = "⚠️ Login query failed.";
     }
 }
 ?>
@@ -30,5 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <input type="submit" value="Login">
 </form>
 <p style="color:red;"><?php echo $error; ?></p>
+<p><a href="register.php">Need an account? Register here.</a></p>
 </body>
 </html>
