@@ -2,7 +2,7 @@
 $db = new SQLite3('data/users.db');
 
 $username = 'z3r0h00d';
-$raw_password = 'hunter2';
+$raw_password = $raw_password;
 $encoded_password = str_rot13($raw_password);
 $role = 'admin';
 
