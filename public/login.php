@@ -1,12 +1,14 @@
 <?php
 ob_start();
 session_start();
+header("Content-Type: text/html; charset=UTF-8");
+
 include('/var/www/includes/config.php');
 $error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
-    $password = str_rot13($_POST['password']); // Apply ROT13 to user input
+    $password = str_rot13($_POST['password']); // ROT13 transform
 
     $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
     $stmt->bindValue(':username', $username);
@@ -14,7 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($stmt->execute()) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // TEMPORARY: Log login attempt for debugging
         file_put_contents('/tmp/login_debug.log', print_r([
             'username_input' => $username,
             'password_input_rot13' => $password,
