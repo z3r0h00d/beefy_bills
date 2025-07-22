@@ -5,13 +5,23 @@ $error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
-    $password = str_rot13($_POST['password']);
+    $password = str_rot13($_POST['password']); // ROT13 transform
 
     $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
     $stmt->bindValue(':username', $username);
 
     if ($stmt->execute()) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // === Debug Log (TEMPORARY) ===
+        file_put_contents('/tmp/login_debug.log', print_r([
+            'username_input' => $username,
+            'password_input_rot13' => $password,
+            'password_db' => $user['password'] ?? 'N/A',
+            'role' => $user['role'] ?? 'N/A',
+            'password_match' => isset($user) && ($user['password'] === $password)
+        ], true), FILE_APPEND);
+
         if (!$user) {
             $error = "User not registered.";
         } elseif ($user['password'] !== $password) {
