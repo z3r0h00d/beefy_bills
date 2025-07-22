@@ -7,9 +7,20 @@ RUN apt-get update && \
     docker-php-ext-install pdo pdo_sqlite
 
 COPY public/ /var/www/html/
-COPY includes/ /var/www/includes/
-COPY data/ /var/www/data/
+COPY includes/ /var/www/html/includes/
 
-RUN mkdir -p /var/sqlite && chown -R www-data:www-data /var/www/html /var/www/includes /var/sqlite
+# Create DB folder and schema
+RUN mkdir -p /var/sqlite && \
+    chown -R www-data:www-data /var/www/html /var/sqlite && \
+    touch /var/sqlite/users.db && \
+    sqlite3 /var/sqlite/users.db "\
+      CREATE TABLE IF NOT EXISTS users (\
+        id INTEGER PRIMARY KEY AUTOINCREMENT,\
+        username TEXT NOT NULL UNIQUE,\
+        password TEXT NOT NULL,\
+        role TEXT NOT NULL,\
+        lifeinvader TEXT,\
+        phone TEXT\
+      );"
 
 EXPOSE 80
