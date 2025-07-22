@@ -1,5 +1,5 @@
 <?php
-include(__DIR__ . '/includes/config.php');
+include('/var/www/includes/config.php');
 ?>
 <!DOCTYPE html>
 <html>
