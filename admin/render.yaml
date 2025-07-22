@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: beefy-bills
+    env: docker
+    repo: https://github.com/z3r0h00d/beefy_bills
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    buildFilter:
+      paths:
+        - beefybills/**
+    envVars:
+      - key: DB_PATH
+        value: /var/sqlite/users.db
+    disk:
+      name: db-data
+      mountPath: /var/sqlite
+      sizeGB: 1
