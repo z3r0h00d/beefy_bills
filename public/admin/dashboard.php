@@ -1,13 +1,24 @@
 <?php
 session_start();
 
-// Redirect if user is not logged in or not an admin
 if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     header("Location: /login.php");
     exit();
 }
 
 include('/var/www/includes/config.php');
+
+// Handle role update POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['role'])) {
+    $username = $_POST['username'];
+    $newRole = $_POST['role'];
+    $validRoles = ['admin', 'boosting', 'racing', 'customer'];
+
+    if (in_array($newRole, $validRoles)) {
+        $stmt = $db->prepare("UPDATE users SET role = :role WHERE username = :username");
+        $stmt->execute([':role' => $newRole, ':username' => $username]);
+    }
+}
 
 // Fetch all users
 $stmt = $db->query("SELECT username, role FROM users ORDER BY username");
@@ -21,22 +32,26 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <h1>Welcome to the Admin Dashboard</h1>
-    <p>Hello, <?php echo htmlspecialchars($_SESSION['user']); ?> (<?php echo htmlspecialchars($_SESSION['role']); ?>)</p>
-    <p>Below is a list of users and their assigned roles. Role editing is currently disabled.</p>
+    <p>Hello, <?= htmlspecialchars($_SESSION['user']) ?> (<?= htmlspecialchars($_SESSION['role']) ?>)</p>
+    <p>You can change user roles using the dropdowns below:</p>
 
     <table border="1">
-        <tr><th>Username</th><th>Role</th></tr>
+        <tr><th>Username</th><th>Role</th><th>Action</th></tr>
         <?php foreach ($users as $user): ?>
         <tr>
-            <td><?= htmlspecialchars($user['username']) ?></td>
-            <td>
-                <select disabled>
-                    <option value="admin"<?= $user['role'] === 'admin' ? ' selected' : '' ?>>Admin</option>
-                    <option value="boosting"<?= $user['role'] === 'boosting' ? ' selected' : '' ?>>Boosting</option>
-                    <option value="racing"<?= $user['role'] === 'racing' ? ' selected' : '' ?>>Racing</option>
-                    <option value="customer"<?= $user['role'] === 'customer' ? ' selected' : '' ?>>Customer</option>
-                </select>
-            </td>
+            <form method="POST" action="dashboard.php">
+                <td><?= htmlspecialchars($user['username']) ?></td>
+                <td>
+                    <input type="hidden" name="username" value="<?= htmlspecialchars($user['username']) ?>">
+                    <select name="role">
+                        <option value="admin"<?= $user['role'] === 'admin' ? ' selected' : '' ?>>Admin</option>
+                        <option value="boosting"<?= $user['role'] === 'boosting' ? ' selected' : '' ?>>Boosting</option>
+                        <option value="racing"<?= $user['role'] === 'racing' ? ' selected' : '' ?>>Racing</option>
+                        <option value="customer"<?= $user['role'] === 'customer' ? ' selected' : '' ?>>Customer</option>
+                    </select>
+                </td>
+                <td><button type="submit">Update</button></td>
+            </form>
         </tr>
         <?php endforeach; ?>
     </table>
@@ -46,3 +61,4 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <a href="/logout.php">Logout</a>
 </body>
 </html>
+
