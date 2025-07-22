@@ -1,11 +1,11 @@
 <?php
 session_start();
-include('/var/www/includes/config.php'); // Fixed path
+include('/var/www/includes/config.php'); // Correct path to config
 $error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
-    $password = str_rot13($_POST['password']); // Apply ROT13 before checking
+    $password = str_rot13($_POST['password']); // Apply ROT13 to match stored password
 
     $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
     $stmt->bindValue(':username', $username);
@@ -18,8 +18,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Incorrect password.";
         } else {
             $_SESSION['user'] = $user['username'];
-            $_SESSION['role'] = $user['role']; // ✅ Store role in session
-            header("Location: index.php");
+            $_SESSION['role'] = $user['role'];
+
+            // Redirect based on role
+            if ($user['role'] === 'admin') {
+                header("Location: /admin/dashboard.php");
+            } else {
+                header("Location: index.php");
+            }
             exit();
         }
     } else {
