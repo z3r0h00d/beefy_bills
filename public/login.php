@@ -1,11 +1,11 @@
 <?php
 session_start();
-include('/var/www/includes/config.php'); // Correct path to config
+include('/var/www/includes/config.php');
 $error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
-    $password = str_rot13($_POST['password']); // Apply ROT13 to match stored password
+    $password = str_rot13($_POST['password']);
 
     $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
     $stmt->bindValue(':username', $username);
@@ -20,7 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user'] = $user['username'];
             $_SESSION['role'] = $user['role'];
 
-            // Redirect based on role
             if ($user['role'] === 'admin') {
                 header("Location: /admin/dashboard.php");
             } else {
@@ -36,7 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login - Beefy Bill's Burger Bar</title>
+  <meta charset="UTF-8">
+  <title>Login - Beefy Bill&#39;s Burger Bar</title>
 </head>
 <body>
   <h2>Login</h2>
