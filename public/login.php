@@ -1,6 +1,6 @@
 <?php
 session_start();
-include(__DIR__ . '/../includes/config.php'); // Make sure this path is correct
+include('/var/www/includes/config.php'); // Fixed path
 $error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
