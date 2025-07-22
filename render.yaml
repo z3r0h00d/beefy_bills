@@ -13,3 +13,6 @@ services:
       name: db-data
       mountPath: /var/sqlite
       sizeGB: 1
+
+      - key: RAW_PASSWORD
+        value: changeme
