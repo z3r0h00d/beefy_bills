@@ -3,9 +3,12 @@ session_start();
 $error = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $db = new SQLite3('../data/users.db');
+    $username = $_POST['username'];
+    $password = str_rot13($_POST['password']); // ROT13 decode
+
     $stmt = $db->prepare("SELECT * FROM users WHERE username = :username AND password = :password AND role = 'admin'");
-    $stmt->bindValue(':username', $_POST['username'], SQLITE3_TEXT);
-    $stmt->bindValue(':password', $_POST['password'], SQLITE3_TEXT);
+    $stmt->bindValue(':username', $username, SQLITE3_TEXT);
+    $stmt->bindValue(':password', $password, SQLITE3_TEXT);
     $result = $stmt->execute();
     $user = $result->fetchArray(SQLITE3_ASSOC);
     if ($user) {
