@@ -1,24 +1,34 @@
 <?php
 session_start();
-include("../includes/config.php");
-
+include(__DIR__ . '/includes/config.php');
+$error = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $user = $_POST['username'];
-    $pass = $_POST['password'];
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$user]);
-    $row = $stmt->fetch();
-    if ($row && password_verify($pass, $row['password'])) {
-        $_SESSION['username'] = $user;
+    $username = $_POST['username'];
+    $password = str_rot13($_POST['password']);
+    $stmt = $db->prepare("SELECT * FROM users WHERE username = :username AND password = :password");
+    $stmt->bindValue(':username', $username);
+    $stmt->bindValue(':password', $password);
+    $result = $stmt->execute();
+    $user = $result->fetch(PDO::FETCH_ASSOC);
+    if ($user) {
+        $_SESSION['user'] = $user['username'];
         header("Location: index.php");
-        exit;
+        exit();
     } else {
-        echo "Invalid login.";
+        $error = "Invalid credentials.";
     }
 }
 ?>
+<!DOCTYPE html>
+<html>
+<head><title>Login</title></head>
+<body>
+<h2>Login</h2>
 <form method="post">
-    Username: <input name="username"><br>
-    Password: <input name="password" type="password"><br>
-    <input type="submit" value="Login">
+  Username: <input type="text" name="username" required><br>
+  Password: <input type="password" name="password" required><br>
+  <input type="submit" value="Login">
 </form>
+<p style="color:red;"><?php echo $error; ?></p>
+</body>
+</html>

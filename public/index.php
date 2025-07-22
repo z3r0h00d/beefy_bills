@@ -1,4 +1,11 @@
 <?php
 include(__DIR__ . '/includes/config.php');
-echo "Welcome to Beefy Bill's Burger Bar 🍔";
 ?>
+<!DOCTYPE html>
+<html>
+<head><title>Beefy Bill's Burger Bar</title></head>
+<body>
+<h1>Welcome to Beefy Bill's Burger Bar 🍔</h1>
+<a href="login.php">Login</a> | <a href="register.php">Register</a>
+</body>
+</html>

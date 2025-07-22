@@ -6,7 +6,6 @@ RUN apt-get update &&     apt-get install -y libsqlite3-dev &&     docker-php-ex
 
 COPY public/ /var/www/html/
 COPY includes/ /var/www/html/includes/
-COPY admin/ /var/www/html/admin/
 
 RUN mkdir -p /var/sqlite && chown -R www-data:www-data /var/www/html /var/sqlite
 
