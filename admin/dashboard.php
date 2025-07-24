@@ -1,37 +1,32 @@
 <?php
+include(__DIR__ . '/../../includes/config.php');
 session_start();
-if (!isset($_SESSION['admin'])) {
-    header("Location: login.php");
-    exit();
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: /login.php");
+    exit;
 }
-$db_path = getenv('DB_PATH') ?: '/var/sqlite/users.db';
-$db = new SQLite3($db_path);
-$users = $db->query("SELECT id, username, role FROM users");
+
+$stmt = $db->query("SELECT username, role, lifeinvader, phone FROM users ORDER BY username");
+$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
 <head><title>Admin Dashboard</title></head>
 <body>
-<h2>Admin Dashboard</h2>
-<p>Welcome, <?php echo $_SESSION['admin']; ?> | <a href="logout.php">Logout</a></p>
+<h1>Admin Dashboard</h1>
 <table border="1">
-<tr><th>Username</th><th>Role</th><th>Change Role</th></tr>
-<?php while ($row = $users->fetchArray(SQLITE3_ASSOC)): ?>
-<tr>
-  <form method="post" action="update_role.php">
-    <td><?php echo htmlspecialchars($row['username']); ?></td>
-    <td><?php echo htmlspecialchars($row['role']); ?></td>
-    <td>
-        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-        <select name="role">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-        </select>
-        <input type="submit" value="Update">
-    </td>
-  </form>
-</tr>
-<?php endwhile; ?>
+    <tr><th>Username</th><th>Role</th><th>Lifeinvader</th><th>Phone</th></tr>
+    <?php foreach ($users as $user): ?>
+    <tr>
+        <td><?= htmlspecialchars($user['username']) ?></td>
+        <td><?= htmlspecialchars($user['role']) ?></td>
+        <td><?= htmlspecialchars($user['lifeinvader']) ?></td>
+        <td><?= htmlspecialchars($user['phone']) ?></td>
+    </tr>
+    <?php endforeach; ?>
 </table>
+<br>
+<a href="/logout.php">Logout</a>
 </body>
 </html>
