@@ -6,7 +6,8 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-include('/var/www/html/includes/config.php');
+include(__DIR__ . '/includes/config.php');
+
 
 // Handle role update POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['role'])) {

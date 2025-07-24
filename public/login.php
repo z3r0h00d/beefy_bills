@@ -3,7 +3,8 @@ ob_start();
 session_start();
 header("Content-Type: text/html; charset=UTF-8");
 
-include('/var/www/html/includes/config.php');
+include(__DIR__ . '/includes/config.php');
+
 $error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
