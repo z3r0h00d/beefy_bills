@@ -1,5 +1,5 @@
 <?php
-include('/var/www/includes/config.php');
+include('/var/www/html/includes/config.php');
 ?>
 <!DOCTYPE html>
 <html>
